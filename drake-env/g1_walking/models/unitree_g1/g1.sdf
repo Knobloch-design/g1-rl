@@ -1,0 +1,988 @@
+<?xml version="1.0"?>
+<!--
+  Unitree G1 humanoid (29 DOF), converted from mjlab's G1 model
+  (https://github.com/mujocolab/mjlab, commit a6a76e59bf,
+  src/mjlab/asset_zoo/robots/unitree_g1/xmls/g1.xml). See README.md and LICENSE.md.
+
+  Kinematics, inertias, joint limits, and collision capsules/spheres are
+  taken from g1.xml. Effort limits, armature (drake:rotor_inertia with
+  gear ratio 1) and PD gains (drake:controller_gains) come from mjlab's
+  g1_constants.py, which sets p = armature * w^2 and d = 2 * zeta *
+  armature * w with w = 2 pi * 10 Hz and zeta = 2. The 50 N m waist
+  pitch/roll and ankle limits are mjlab's approximation of a two-motor
+  linkage (2 x 25 N m), not a Unitree spec. Meshes are visual only.
+-->
+<sdf version="1.9" xmlns:drake="http://drake.mit.edu">
+  <model name="g1">
+
+    <link name="pelvis">
+      <pose>0 0 0.793 0 0 0</pose>
+      <inertial>
+        <pose>0 0 -0.07605 0 0 0</pose>
+        <mass>3.813</mass>
+        <inertia><ixx>0.0105489983</ixx><ixy>0</ixy><ixz>2.09999645e-06</ixz><iyy>0.0093089</iyy><iyz>0</iyz><izz>0.00791840168</izz></inertia>
+      </inertial>
+      <visual name="pelvis_visual">
+        <geometry><mesh><uri>meshes/pelvis.obj</uri></mesh></geometry>
+        <material><diffuse>0.2 0.2 0.2 1</diffuse></material>
+      </visual>
+      <visual name="pelvis_contour_link_visual">
+        <geometry><mesh><uri>meshes/pelvis_contour_link.obj</uri></mesh></geometry>
+        <material><diffuse>0.7 0.7 0.7 1</diffuse></material>
+      </visual>
+      <collision name="pelvis_collision">
+        <pose>0 0 -0.08 0 0 0</pose>
+        <geometry><sphere><radius>0.07</radius></sphere></geometry>
+        <drake:proximity_properties><drake:compliant_hydroelastic/>
+          <drake:hydroelastic_modulus>5e7</drake:hydroelastic_modulus>
+          <drake:mesh_resolution_hint>0.07</drake:mesh_resolution_hint>
+          <drake:hunt_crossley_dissipation>1.0</drake:hunt_crossley_dissipation>
+          <drake:mu_dynamic>0.6</drake:mu_dynamic><drake:mu_static>0.6</drake:mu_static>
+        </drake:proximity_properties>
+      </collision>
+    </link>
+    <frame name="imu_in_pelvis" attached_to="pelvis"><pose>0.04525 0 -0.08339 0 0 0</pose></frame>
+
+    <link name="left_hip_pitch_link">
+      <pose relative_to="pelvis">0 0.064452 -0.1027 0 0 0</pose>
+      <inertial>
+        <pose>0.002741 0.047791 -0.02606 0 0 0</pose>
+        <mass>1.35</mass>
+        <inertia><ixx>0.00181100487</ixx><ixy>3.68000839e-05</ixy><ixz>-3.44002e-05</ixz><iyy>0.00141930299</iyy><iyz>0.000171000371</iyz><izz>0.00128120214</izz></inertia>
+      </inertial>
+      <visual name="left_hip_pitch_link_visual">
+        <geometry><mesh><uri>meshes/left_hip_pitch_link.obj</uri></mesh></geometry>
+        <material><diffuse>0.2 0.2 0.2 1</diffuse></material>
+      </visual>
+    </link>
+    <joint name="left_hip_pitch_joint" type="revolute">
+      <parent>pelvis</parent>
+      <child>left_hip_pitch_link</child>
+      <axis><xyz>0 1 0</xyz><limit><lower>-2.5307</lower><upper>2.8798</upper><effort>88</effort></limit></axis>
+      <drake:rotor_inertia>0.01017752</drake:rotor_inertia><drake:gear_ratio>1</drake:gear_ratio>
+      <drake:controller_gains p="40.1792386" d="2.55788978"/>
+    </joint>
+
+    <link name="left_hip_roll_link">
+      <pose relative_to="left_hip_pitch_link">0 0.052 -0.030465 0 -0.174899984 0</pose>
+      <inertial>
+        <pose>0.029812 -0.001045 -0.087934 0 0 0</pose>
+        <mass>1.52</mass>
+        <inertia><ixx>0.00237730017</ixx><ixy>-3.80016636e-06</ixy><ixz>-0.00039079999</ixz><iyy>0.00241229823</iyy><iyz>1.84000462e-05</iyz><izz>0.0016595016</izz></inertia>
+      </inertial>
+      <visual name="left_hip_roll_link_visual">
+        <geometry><mesh><uri>meshes/left_hip_roll_link.obj</uri></mesh></geometry>
+        <material><diffuse>0.7 0.7 0.7 1</diffuse></material>
+      </visual>
+      <collision name="left_hip_collision">
+        <pose>0.02 0 -0.04 3.14159265 0 0</pose>
+        <geometry><capsule><radius>0.06</radius><length>0.08</length></capsule></geometry>
+        <drake:proximity_properties><drake:compliant_hydroelastic/>
+          <drake:hydroelastic_modulus>5e7</drake:hydroelastic_modulus>
+          <drake:mesh_resolution_hint>0.06</drake:mesh_resolution_hint>
+          <drake:hunt_crossley_dissipation>1.0</drake:hunt_crossley_dissipation>
+          <drake:mu_dynamic>0.6</drake:mu_dynamic><drake:mu_static>0.6</drake:mu_static>
+        </drake:proximity_properties>
+      </collision>
+    </link>
+    <joint name="left_hip_roll_joint" type="revolute">
+      <parent>left_hip_pitch_link</parent>
+      <child>left_hip_roll_link</child>
+      <axis><xyz>1 0 0</xyz><limit><lower>-0.5236</lower><upper>2.9671</upper><effort>139</effort></limit></axis>
+      <drake:rotor_inertia>0.025101925</drake:rotor_inertia><drake:gear_ratio>1</drake:gear_ratio>
+      <drake:controller_gains p="99.0984278" d="6.30880185"/>
+    </joint>
+
+    <link name="left_hip_yaw_link">
+      <pose relative_to="left_hip_roll_link">0.025001 0 -0.12412 0 0 0</pose>
+      <inertial>
+        <pose>-0.057709 -0.010981 -0.15078 0 0 0</pose>
+        <mass>1.702</mass>
+        <inertia><ixx>0.00577739711</ixx><ixy>-0.000541101155</ixy><ixz>-0.00239480377</ixz><iyy>0.0076124014</iyy><iyz>-0.00070720225</iyz><izz>0.00314900149</izz></inertia>
+      </inertial>
+      <visual name="left_hip_yaw_link_visual">
+        <geometry><mesh><uri>meshes/left_hip_yaw_link.obj</uri></mesh></geometry>
+        <material><diffuse>0.7 0.7 0.7 1</diffuse></material>
+      </visual>
+      <collision name="left_thigh_collision">
+        <pose>-0.03 0 -0.1 -3.14159265 -0.404891786 3.14159265</pose>
+        <geometry><capsule><radius>0.055</radius><length>0.152315462</length></capsule></geometry>
+        <drake:proximity_properties><drake:compliant_hydroelastic/>
+          <drake:hydroelastic_modulus>5e7</drake:hydroelastic_modulus>
+          <drake:mesh_resolution_hint>0.055</drake:mesh_resolution_hint>
+          <drake:hunt_crossley_dissipation>1.0</drake:hunt_crossley_dissipation>
+          <drake:mu_dynamic>0.6</drake:mu_dynamic><drake:mu_static>0.6</drake:mu_static>
+        </drake:proximity_properties>
+      </collision>
+    </link>
+    <joint name="left_hip_yaw_joint" type="revolute">
+      <parent>left_hip_roll_link</parent>
+      <child>left_hip_yaw_link</child>
+      <axis><xyz>0 0 1</xyz><limit><lower>-2.7576</lower><upper>2.7576</upper><effort>88</effort></limit></axis>
+      <drake:rotor_inertia>0.01017752</drake:rotor_inertia><drake:gear_ratio>1</drake:gear_ratio>
+      <drake:controller_gains p="40.1792386" d="2.55788978"/>
+    </joint>
+
+    <link name="left_knee_link">
+      <pose relative_to="left_hip_yaw_link">-0.078273 0.0021489 -0.17734 0 0.174899984 0</pose>
+      <inertial>
+        <pose>0.005457 0.003964 -0.12074 0 0 0</pose>
+        <mass>1.932</mass>
+        <inertia><ixx>0.0113289923</ixx><ixy>4.81665062e-05</ixy><ixz>-4.48974521e-05</ixz><iyy>0.0112769924</iyy><iyz>-0.000714600249</iyz><izz>0.00151679526</izz></inertia>
+      </inertial>
+      <visual name="left_knee_link_visual">
+        <geometry><mesh><uri>meshes/left_knee_link.obj</uri></mesh></geometry>
+        <material><diffuse>0.7 0.7 0.7 1</diffuse></material>
+      </visual>
+      <collision name="left_shin_collision">
+        <pose>0.01 0 -0.075 3.14159265 0 0</pose>
+        <geometry><capsule><radius>0.045</radius><length>0.15</length></capsule></geometry>
+        <drake:proximity_properties><drake:compliant_hydroelastic/>
+          <drake:hydroelastic_modulus>5e7</drake:hydroelastic_modulus>
+          <drake:mesh_resolution_hint>0.045</drake:mesh_resolution_hint>
+          <drake:hunt_crossley_dissipation>1.0</drake:hunt_crossley_dissipation>
+          <drake:mu_dynamic>0.6</drake:mu_dynamic><drake:mu_static>0.6</drake:mu_static>
+        </drake:proximity_properties>
+      </collision>
+      <collision name="left_linkage_brace_collision">
+        <pose>0.01 0 -0.24 3.14159265 0 0</pose>
+        <geometry><capsule><radius>0.03</radius><length>0.08</length></capsule></geometry>
+        <drake:proximity_properties><drake:compliant_hydroelastic/>
+          <drake:hydroelastic_modulus>5e7</drake:hydroelastic_modulus>
+          <drake:mesh_resolution_hint>0.03</drake:mesh_resolution_hint>
+          <drake:hunt_crossley_dissipation>1.0</drake:hunt_crossley_dissipation>
+          <drake:mu_dynamic>0.6</drake:mu_dynamic><drake:mu_static>0.6</drake:mu_static>
+        </drake:proximity_properties>
+      </collision>
+    </link>
+    <joint name="left_knee_joint" type="revolute">
+      <parent>left_hip_yaw_link</parent>
+      <child>left_knee_link</child>
+      <axis><xyz>0 1 0</xyz><limit><lower>-0.087267</lower><upper>2.8798</upper><effort>139</effort></limit></axis>
+      <drake:rotor_inertia>0.025101925</drake:rotor_inertia><drake:gear_ratio>1</drake:gear_ratio>
+      <drake:controller_gains p="99.0984278" d="6.30880185"/>
+    </joint>
+
+    <link name="left_ankle_pitch_link">
+      <pose relative_to="left_knee_link">0 -9.4445e-05 -0.30001 0 0 0</pose>
+      <inertial>
+        <pose>-0.007269 0 0.011137 0 0 0</pose>
+        <mass>0.074</mass>
+        <inertia><ixx>8.39999715e-06</ixx><ixy>0</ixy><ixz>-2.89999453e-06</ixz><iyy>1.89e-05</iyy><iyz>0</iyz><izz>1.26000028e-05</izz></inertia>
+      </inertial>
+      <visual name="left_ankle_pitch_link_visual">
+        <geometry><mesh><uri>meshes/left_ankle_pitch_link.obj</uri></mesh></geometry>
+        <material><diffuse>0.7 0.7 0.7 1</diffuse></material>
+      </visual>
+    </link>
+    <joint name="left_ankle_pitch_joint" type="revolute">
+      <parent>left_knee_link</parent>
+      <child>left_ankle_pitch_link</child>
+      <axis><xyz>0 1 0</xyz><limit><lower>-0.87267</lower><upper>0.5236</upper><effort>50</effort></limit></axis>
+      <drake:rotor_inertia>0.00721945</drake:rotor_inertia><drake:gear_ratio>1</drake:gear_ratio>
+      <drake:controller_gains p="28.5012462" d="1.81444569"/>
+    </joint>
+
+    <link name="left_ankle_roll_link">
+      <pose relative_to="left_ankle_pitch_link">0 0 -0.017558 0 0 0</pose>
+      <inertial>
+        <pose>0.026505 0 -0.016425 0 0 0</pose>
+        <mass>0.608</mass>
+        <inertia><ixx>0.000223099671</ixx><ixy>1.99999908e-07</ixy><ixz>8.91010117e-05</ixz><iyy>0.00161610011</iyy><iyz>-1.00002017e-07</iyz><izz>0.00166670122</izz></inertia>
+      </inertial>
+      <visual name="left_ankle_roll_link_visual">
+        <geometry><mesh><uri>meshes/left_ankle_roll_link.obj</uri></mesh></geometry>
+        <material><diffuse>0.2 0.2 0.2 1</diffuse></material>
+      </visual>
+      <collision name="left_foot1_collision">
+        <pose>0.075 -0.0265 -0.025 1.57079633 -1.55079899 -1.55079899</pose>
+        <geometry><capsule><radius>0.01</radius><length>0.050009999</length></capsule></geometry>
+        <drake:proximity_properties><drake:compliant_hydroelastic/>
+          <drake:hydroelastic_modulus>5e7</drake:hydroelastic_modulus>
+          <drake:mesh_resolution_hint>0.01</drake:mesh_resolution_hint>
+          <drake:hunt_crossley_dissipation>1.0</drake:hunt_crossley_dissipation>
+          <drake:mu_dynamic>0.6</drake:mu_dynamic><drake:mu_static>0.6</drake:mu_static>
+        </drake:proximity_properties>
+      </collision>
+      <collision name="left_foot2_collision">
+        <pose>0.0395 -0.018 -0.025 0 1.57079633 0</pose>
+        <geometry><capsule><radius>0.01</radius><length>0.167</length></capsule></geometry>
+        <drake:proximity_properties><drake:compliant_hydroelastic/>
+          <drake:hydroelastic_modulus>5e7</drake:hydroelastic_modulus>
+          <drake:mesh_resolution_hint>0.01</drake:mesh_resolution_hint>
+          <drake:hunt_crossley_dissipation>1.0</drake:hunt_crossley_dissipation>
+          <drake:mu_dynamic>0.6</drake:mu_dynamic><drake:mu_static>0.6</drake:mu_static>
+        </drake:proximity_properties>
+      </collision>
+      <collision name="left_foot3_collision">
+        <pose>0.039 -0.01 -0.025 0 1.57079633 0</pose>
+        <geometry><capsule><radius>0.01</radius><length>0.182</length></capsule></geometry>
+        <drake:proximity_properties><drake:compliant_hydroelastic/>
+          <drake:hydroelastic_modulus>5e7</drake:hydroelastic_modulus>
+          <drake:mesh_resolution_hint>0.01</drake:mesh_resolution_hint>
+          <drake:hunt_crossley_dissipation>1.0</drake:hunt_crossley_dissipation>
+          <drake:mu_dynamic>0.6</drake:mu_dynamic><drake:mu_static>0.6</drake:mu_static>
+        </drake:proximity_properties>
+      </collision>
+      <collision name="left_foot4_collision">
+        <pose>0.039 0 -0.025 0 1.57079633 0</pose>
+        <geometry><capsule><radius>0.01</radius><length>0.186</length></capsule></geometry>
+        <drake:proximity_properties><drake:compliant_hydroelastic/>
+          <drake:hydroelastic_modulus>5e7</drake:hydroelastic_modulus>
+          <drake:mesh_resolution_hint>0.01</drake:mesh_resolution_hint>
+          <drake:hunt_crossley_dissipation>1.0</drake:hunt_crossley_dissipation>
+          <drake:mu_dynamic>0.6</drake:mu_dynamic><drake:mu_static>0.6</drake:mu_static>
+        </drake:proximity_properties>
+      </collision>
+      <collision name="left_foot5_collision">
+        <pose>0.039 0.01 -0.025 0 1.57079633 0</pose>
+        <geometry><capsule><radius>0.01</radius><length>0.182</length></capsule></geometry>
+        <drake:proximity_properties><drake:compliant_hydroelastic/>
+          <drake:hydroelastic_modulus>5e7</drake:hydroelastic_modulus>
+          <drake:mesh_resolution_hint>0.01</drake:mesh_resolution_hint>
+          <drake:hunt_crossley_dissipation>1.0</drake:hunt_crossley_dissipation>
+          <drake:mu_dynamic>0.6</drake:mu_dynamic><drake:mu_static>0.6</drake:mu_static>
+        </drake:proximity_properties>
+      </collision>
+      <collision name="left_foot6_collision">
+        <pose>0.0395 0.018 -0.025 0 1.57079633 0</pose>
+        <geometry><capsule><radius>0.01</radius><length>0.167</length></capsule></geometry>
+        <drake:proximity_properties><drake:compliant_hydroelastic/>
+          <drake:hydroelastic_modulus>5e7</drake:hydroelastic_modulus>
+          <drake:mesh_resolution_hint>0.01</drake:mesh_resolution_hint>
+          <drake:hunt_crossley_dissipation>1.0</drake:hunt_crossley_dissipation>
+          <drake:mu_dynamic>0.6</drake:mu_dynamic><drake:mu_static>0.6</drake:mu_static>
+        </drake:proximity_properties>
+      </collision>
+      <collision name="left_foot7_collision">
+        <pose>0.075 0.026 -0.025 0 -1.57079633 0</pose>
+        <geometry><capsule><radius>0.01</radius><length>0.05</length></capsule></geometry>
+        <drake:proximity_properties><drake:compliant_hydroelastic/>
+          <drake:hydroelastic_modulus>5e7</drake:hydroelastic_modulus>
+          <drake:mesh_resolution_hint>0.01</drake:mesh_resolution_hint>
+          <drake:hunt_crossley_dissipation>1.0</drake:hunt_crossley_dissipation>
+          <drake:mu_dynamic>0.6</drake:mu_dynamic><drake:mu_static>0.6</drake:mu_static>
+        </drake:proximity_properties>
+      </collision>
+    </link>
+    <frame name="left_foot" attached_to="left_ankle_roll_link"><pose>0.04 0 -0.037 0 0 0</pose></frame>
+    <joint name="left_ankle_roll_joint" type="revolute">
+      <parent>left_ankle_pitch_link</parent>
+      <child>left_ankle_roll_link</child>
+      <axis><xyz>1 0 0</xyz><limit><lower>-0.2618</lower><upper>0.2618</upper><effort>50</effort></limit></axis>
+      <drake:rotor_inertia>0.00721945</drake:rotor_inertia><drake:gear_ratio>1</drake:gear_ratio>
+      <drake:controller_gains p="28.5012462" d="1.81444569"/>
+    </joint>
+
+    <link name="right_hip_pitch_link">
+      <pose relative_to="pelvis">0 -0.064452 -0.1027 0 0 0</pose>
+      <inertial>
+        <pose>0.002741 -0.047791 -0.02606 0 0 0</pose>
+        <mass>1.35</mass>
+        <inertia><ixx>0.00181100487</ixx><ixy>-3.68000839e-05</ixy><ixz>-3.44002e-05</ixz><iyy>0.00141930299</iyy><iyz>-0.000171000371</iyz><izz>0.00128120214</izz></inertia>
+      </inertial>
+      <visual name="right_hip_pitch_link_visual">
+        <geometry><mesh><uri>meshes/right_hip_pitch_link.obj</uri></mesh></geometry>
+        <material><diffuse>0.2 0.2 0.2 1</diffuse></material>
+      </visual>
+    </link>
+    <joint name="right_hip_pitch_joint" type="revolute">
+      <parent>pelvis</parent>
+      <child>right_hip_pitch_link</child>
+      <axis><xyz>0 1 0</xyz><limit><lower>-2.5307</lower><upper>2.8798</upper><effort>88</effort></limit></axis>
+      <drake:rotor_inertia>0.01017752</drake:rotor_inertia><drake:gear_ratio>1</drake:gear_ratio>
+      <drake:controller_gains p="40.1792386" d="2.55788978"/>
+    </joint>
+
+    <link name="right_hip_roll_link">
+      <pose relative_to="right_hip_pitch_link">0 -0.052 -0.030465 0 -0.174899984 0</pose>
+      <inertial>
+        <pose>0.029812 0.001045 -0.087934 0 0 0</pose>
+        <mass>1.52</mass>
+        <inertia><ixx>0.00237730017</ixx><ixy>3.80016636e-06</ixy><ixz>-0.00039079999</ixz><iyy>0.00241229823</iyy><iyz>-1.84000462e-05</iyz><izz>0.0016595016</izz></inertia>
+      </inertial>
+      <visual name="right_hip_roll_link_visual">
+        <geometry><mesh><uri>meshes/right_hip_roll_link.obj</uri></mesh></geometry>
+        <material><diffuse>0.7 0.7 0.7 1</diffuse></material>
+      </visual>
+      <collision name="right_hip_collision">
+        <pose>0.02 0 -0.04 3.14159265 0 0</pose>
+        <geometry><capsule><radius>0.06</radius><length>0.08</length></capsule></geometry>
+        <drake:proximity_properties><drake:compliant_hydroelastic/>
+          <drake:hydroelastic_modulus>5e7</drake:hydroelastic_modulus>
+          <drake:mesh_resolution_hint>0.06</drake:mesh_resolution_hint>
+          <drake:hunt_crossley_dissipation>1.0</drake:hunt_crossley_dissipation>
+          <drake:mu_dynamic>0.6</drake:mu_dynamic><drake:mu_static>0.6</drake:mu_static>
+        </drake:proximity_properties>
+      </collision>
+    </link>
+    <joint name="right_hip_roll_joint" type="revolute">
+      <parent>right_hip_pitch_link</parent>
+      <child>right_hip_roll_link</child>
+      <axis><xyz>1 0 0</xyz><limit><lower>-2.9671</lower><upper>0.5236</upper><effort>139</effort></limit></axis>
+      <drake:rotor_inertia>0.025101925</drake:rotor_inertia><drake:gear_ratio>1</drake:gear_ratio>
+      <drake:controller_gains p="99.0984278" d="6.30880185"/>
+    </joint>
+
+    <link name="right_hip_yaw_link">
+      <pose relative_to="right_hip_roll_link">0.025001 0 -0.12412 0 0 0</pose>
+      <inertial>
+        <pose>-0.057709 0.010981 -0.15078 0 0 0</pose>
+        <mass>1.702</mass>
+        <inertia><ixx>0.00577739711</ixx><ixy>0.000541101155</ixy><ixz>-0.00239480377</ixz><iyy>0.0076124014</iyy><iyz>0.00070720225</iyz><izz>0.00314900149</izz></inertia>
+      </inertial>
+      <visual name="right_hip_yaw_link_visual">
+        <geometry><mesh><uri>meshes/right_hip_yaw_link.obj</uri></mesh></geometry>
+        <material><diffuse>0.7 0.7 0.7 1</diffuse></material>
+      </visual>
+      <collision name="right_thigh_collision">
+        <pose>-0.03 0 -0.1 -3.14159265 -0.404891786 3.14159265</pose>
+        <geometry><capsule><radius>0.055</radius><length>0.152315462</length></capsule></geometry>
+        <drake:proximity_properties><drake:compliant_hydroelastic/>
+          <drake:hydroelastic_modulus>5e7</drake:hydroelastic_modulus>
+          <drake:mesh_resolution_hint>0.055</drake:mesh_resolution_hint>
+          <drake:hunt_crossley_dissipation>1.0</drake:hunt_crossley_dissipation>
+          <drake:mu_dynamic>0.6</drake:mu_dynamic><drake:mu_static>0.6</drake:mu_static>
+        </drake:proximity_properties>
+      </collision>
+    </link>
+    <joint name="right_hip_yaw_joint" type="revolute">
+      <parent>right_hip_roll_link</parent>
+      <child>right_hip_yaw_link</child>
+      <axis><xyz>0 0 1</xyz><limit><lower>-2.7576</lower><upper>2.7576</upper><effort>88</effort></limit></axis>
+      <drake:rotor_inertia>0.01017752</drake:rotor_inertia><drake:gear_ratio>1</drake:gear_ratio>
+      <drake:controller_gains p="40.1792386" d="2.55788978"/>
+    </joint>
+
+    <link name="right_knee_link">
+      <pose relative_to="right_hip_yaw_link">-0.078273 -0.0021489 -0.17734 0 0.174899984 0</pose>
+      <inertial>
+        <pose>0.005457 -0.003964 -0.12074 0 0 0</pose>
+        <mass>1.932</mass>
+        <inertia><ixx>0.0113290107</ixx><ixy>-4.82389719e-05</ixy><ixz>4.48973458e-05</ixz><iyy>0.0112770104</iyy><iyz>0.000714601046</iyz><izz>0.00151679887</izz></inertia>
+      </inertial>
+      <visual name="right_knee_link_visual">
+        <geometry><mesh><uri>meshes/right_knee_link.obj</uri></mesh></geometry>
+        <material><diffuse>0.7 0.7 0.7 1</diffuse></material>
+      </visual>
+      <collision name="right_shin_collision">
+        <pose>0.01 0 -0.075 3.14159265 0 0</pose>
+        <geometry><capsule><radius>0.045</radius><length>0.15</length></capsule></geometry>
+        <drake:proximity_properties><drake:compliant_hydroelastic/>
+          <drake:hydroelastic_modulus>5e7</drake:hydroelastic_modulus>
+          <drake:mesh_resolution_hint>0.045</drake:mesh_resolution_hint>
+          <drake:hunt_crossley_dissipation>1.0</drake:hunt_crossley_dissipation>
+          <drake:mu_dynamic>0.6</drake:mu_dynamic><drake:mu_static>0.6</drake:mu_static>
+        </drake:proximity_properties>
+      </collision>
+      <collision name="right_linkage_brace_collision">
+        <pose>0.01 0 -0.24 3.14159265 0 0</pose>
+        <geometry><capsule><radius>0.03</radius><length>0.08</length></capsule></geometry>
+        <drake:proximity_properties><drake:compliant_hydroelastic/>
+          <drake:hydroelastic_modulus>5e7</drake:hydroelastic_modulus>
+          <drake:mesh_resolution_hint>0.03</drake:mesh_resolution_hint>
+          <drake:hunt_crossley_dissipation>1.0</drake:hunt_crossley_dissipation>
+          <drake:mu_dynamic>0.6</drake:mu_dynamic><drake:mu_static>0.6</drake:mu_static>
+        </drake:proximity_properties>
+      </collision>
+    </link>
+    <joint name="right_knee_joint" type="revolute">
+      <parent>right_hip_yaw_link</parent>
+      <child>right_knee_link</child>
+      <axis><xyz>0 1 0</xyz><limit><lower>-0.087267</lower><upper>2.8798</upper><effort>139</effort></limit></axis>
+      <drake:rotor_inertia>0.025101925</drake:rotor_inertia><drake:gear_ratio>1</drake:gear_ratio>
+      <drake:controller_gains p="99.0984278" d="6.30880185"/>
+    </joint>
+
+    <link name="right_ankle_pitch_link">
+      <pose relative_to="right_knee_link">0 9.4445e-05 -0.30001 0 0 0</pose>
+      <inertial>
+        <pose>-0.007269 0 0.011137 0 0 0</pose>
+        <mass>0.074</mass>
+        <inertia><ixx>8.39999715e-06</ixx><ixy>0</ixy><ixz>-2.89999453e-06</ixz><iyy>1.89e-05</iyy><iyz>0</iyz><izz>1.26000028e-05</izz></inertia>
+      </inertial>
+      <visual name="right_ankle_pitch_link_visual">
+        <geometry><mesh><uri>meshes/right_ankle_pitch_link.obj</uri></mesh></geometry>
+        <material><diffuse>0.7 0.7 0.7 1</diffuse></material>
+      </visual>
+    </link>
+    <joint name="right_ankle_pitch_joint" type="revolute">
+      <parent>right_knee_link</parent>
+      <child>right_ankle_pitch_link</child>
+      <axis><xyz>0 1 0</xyz><limit><lower>-0.87267</lower><upper>0.5236</upper><effort>50</effort></limit></axis>
+      <drake:rotor_inertia>0.00721945</drake:rotor_inertia><drake:gear_ratio>1</drake:gear_ratio>
+      <drake:controller_gains p="28.5012462" d="1.81444569"/>
+    </joint>
+
+    <link name="right_ankle_roll_link">
+      <pose relative_to="right_ankle_pitch_link">0 0 -0.017558 0 0 0</pose>
+      <inertial>
+        <pose>0.026505 0 -0.016425 0 0 0</pose>
+        <mass>0.608</mass>
+        <inertia><ixx>0.000223099671</ixx><ixy>-1.99999908e-07</ixy><ixz>8.91010117e-05</ixz><iyy>0.00161610011</iyy><iyz>1.00002017e-07</iyz><izz>0.00166670122</izz></inertia>
+      </inertial>
+      <visual name="right_ankle_roll_link_visual">
+        <geometry><mesh><uri>meshes/right_ankle_roll_link.obj</uri></mesh></geometry>
+        <material><diffuse>0.2 0.2 0.2 1</diffuse></material>
+      </visual>
+      <collision name="right_foot1_collision">
+        <pose>0.075 -0.026 -0.025 0 -1.57079633 0</pose>
+        <geometry><capsule><radius>0.01</radius><length>0.05</length></capsule></geometry>
+        <drake:proximity_properties><drake:compliant_hydroelastic/>
+          <drake:hydroelastic_modulus>5e7</drake:hydroelastic_modulus>
+          <drake:mesh_resolution_hint>0.01</drake:mesh_resolution_hint>
+          <drake:hunt_crossley_dissipation>1.0</drake:hunt_crossley_dissipation>
+          <drake:mu_dynamic>0.6</drake:mu_dynamic><drake:mu_static>0.6</drake:mu_static>
+        </drake:proximity_properties>
+      </collision>
+      <collision name="right_foot2_collision">
+        <pose>0.0395 -0.018 -0.025 0 1.57079633 0</pose>
+        <geometry><capsule><radius>0.01</radius><length>0.167</length></capsule></geometry>
+        <drake:proximity_properties><drake:compliant_hydroelastic/>
+          <drake:hydroelastic_modulus>5e7</drake:hydroelastic_modulus>
+          <drake:mesh_resolution_hint>0.01</drake:mesh_resolution_hint>
+          <drake:hunt_crossley_dissipation>1.0</drake:hunt_crossley_dissipation>
+          <drake:mu_dynamic>0.6</drake:mu_dynamic><drake:mu_static>0.6</drake:mu_static>
+        </drake:proximity_properties>
+      </collision>
+      <collision name="right_foot3_collision">
+        <pose>0.039 -0.01 -0.025 0 1.57079633 0</pose>
+        <geometry><capsule><radius>0.01</radius><length>0.182</length></capsule></geometry>
+        <drake:proximity_properties><drake:compliant_hydroelastic/>
+          <drake:hydroelastic_modulus>5e7</drake:hydroelastic_modulus>
+          <drake:mesh_resolution_hint>0.01</drake:mesh_resolution_hint>
+          <drake:hunt_crossley_dissipation>1.0</drake:hunt_crossley_dissipation>
+          <drake:mu_dynamic>0.6</drake:mu_dynamic><drake:mu_static>0.6</drake:mu_static>
+        </drake:proximity_properties>
+      </collision>
+      <collision name="right_foot4_collision">
+        <pose>0.039 0 -0.025 0 1.57079633 0</pose>
+        <geometry><capsule><radius>0.01</radius><length>0.186</length></capsule></geometry>
+        <drake:proximity_properties><drake:compliant_hydroelastic/>
+          <drake:hydroelastic_modulus>5e7</drake:hydroelastic_modulus>
+          <drake:mesh_resolution_hint>0.01</drake:mesh_resolution_hint>
+          <drake:hunt_crossley_dissipation>1.0</drake:hunt_crossley_dissipation>
+          <drake:mu_dynamic>0.6</drake:mu_dynamic><drake:mu_static>0.6</drake:mu_static>
+        </drake:proximity_properties>
+      </collision>
+      <collision name="right_foot5_collision">
+        <pose>0.039 0.01 -0.025 0 1.57079633 0</pose>
+        <geometry><capsule><radius>0.01</radius><length>0.182</length></capsule></geometry>
+        <drake:proximity_properties><drake:compliant_hydroelastic/>
+          <drake:hydroelastic_modulus>5e7</drake:hydroelastic_modulus>
+          <drake:mesh_resolution_hint>0.01</drake:mesh_resolution_hint>
+          <drake:hunt_crossley_dissipation>1.0</drake:hunt_crossley_dissipation>
+          <drake:mu_dynamic>0.6</drake:mu_dynamic><drake:mu_static>0.6</drake:mu_static>
+        </drake:proximity_properties>
+      </collision>
+      <collision name="right_foot6_collision">
+        <pose>0.0395 0.018 -0.025 0 1.57079633 0</pose>
+        <geometry><capsule><radius>0.01</radius><length>0.167</length></capsule></geometry>
+        <drake:proximity_properties><drake:compliant_hydroelastic/>
+          <drake:hydroelastic_modulus>5e7</drake:hydroelastic_modulus>
+          <drake:mesh_resolution_hint>0.01</drake:mesh_resolution_hint>
+          <drake:hunt_crossley_dissipation>1.0</drake:hunt_crossley_dissipation>
+          <drake:mu_dynamic>0.6</drake:mu_dynamic><drake:mu_static>0.6</drake:mu_static>
+        </drake:proximity_properties>
+      </collision>
+      <collision name="right_foot7_collision">
+        <pose>0.075 0.026 -0.025 0 -1.57079633 0</pose>
+        <geometry><capsule><radius>0.01</radius><length>0.05</length></capsule></geometry>
+        <drake:proximity_properties><drake:compliant_hydroelastic/>
+          <drake:hydroelastic_modulus>5e7</drake:hydroelastic_modulus>
+          <drake:mesh_resolution_hint>0.01</drake:mesh_resolution_hint>
+          <drake:hunt_crossley_dissipation>1.0</drake:hunt_crossley_dissipation>
+          <drake:mu_dynamic>0.6</drake:mu_dynamic><drake:mu_static>0.6</drake:mu_static>
+        </drake:proximity_properties>
+      </collision>
+    </link>
+    <frame name="right_foot" attached_to="right_ankle_roll_link"><pose>0.04 0 -0.037 0 0 0</pose></frame>
+    <joint name="right_ankle_roll_joint" type="revolute">
+      <parent>right_ankle_pitch_link</parent>
+      <child>right_ankle_roll_link</child>
+      <axis><xyz>1 0 0</xyz><limit><lower>-0.2618</lower><upper>0.2618</upper><effort>50</effort></limit></axis>
+      <drake:rotor_inertia>0.00721945</drake:rotor_inertia><drake:gear_ratio>1</drake:gear_ratio>
+      <drake:controller_gains p="28.5012462" d="1.81444569"/>
+    </joint>
+
+    <link name="waist_yaw_link">
+      <pose relative_to="pelvis">0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0.003494 0.000233 0.018034 0 0 0</pose>
+        <mass>0.214</mass>
+        <inertia><ixx>0.000106729754</ixx><ixy>2.70281413e-06</ixy><ixz>-7.63111886e-06</ixz><iyy>0.000104219847</iyy><iyz>-2.00997774e-07</iyz><izz>0.000162500399</izz></inertia>
+      </inertial>
+      <visual name="waist_yaw_link_rev_1_0_visual">
+        <geometry><mesh><uri>meshes/waist_yaw_link_rev_1_0.obj</uri></mesh></geometry>
+        <material><diffuse>0.7 0.7 0.7 1</diffuse></material>
+      </visual>
+    </link>
+    <joint name="waist_yaw_joint" type="revolute">
+      <parent>pelvis</parent>
+      <child>waist_yaw_link</child>
+      <axis><xyz>0 0 1</xyz><limit><lower>-2.618</lower><upper>2.618</upper><effort>88</effort></limit></axis>
+      <drake:rotor_inertia>0.01017752</drake:rotor_inertia><drake:gear_ratio>1</drake:gear_ratio>
+      <drake:controller_gains p="40.1792386" d="2.55788978"/>
+    </joint>
+
+    <link name="waist_roll_link">
+      <pose relative_to="waist_yaw_link">-0.0039635 0 0.044 0 0 0</pose>
+      <inertial>
+        <pose>0 2.3e-05 0 0 0 0</pose>
+        <mass>0.086</mass>
+        <inertia><ixx>7.079e-06</ixx><ixy>0</ixy><ixz>0</ixz><iyy>6.339e-06</iyy><iyz>0</iyz><izz>8.245e-06</izz></inertia>
+      </inertial>
+      <visual name="waist_roll_link_rev_1_0_visual">
+        <geometry><mesh><uri>meshes/waist_roll_link_rev_1_0.obj</uri></mesh></geometry>
+        <material><diffuse>0.7 0.7 0.7 1</diffuse></material>
+      </visual>
+    </link>
+    <joint name="waist_roll_joint" type="revolute">
+      <parent>waist_yaw_link</parent>
+      <child>waist_roll_link</child>
+      <axis><xyz>1 0 0</xyz><limit><lower>-0.52</lower><upper>0.52</upper><effort>50</effort></limit></axis>
+      <drake:rotor_inertia>0.00721945</drake:rotor_inertia><drake:gear_ratio>1</drake:gear_ratio>
+      <drake:controller_gains p="28.5012462" d="1.81444569"/>
+    </joint>
+
+    <link name="torso_link">
+      <pose relative_to="waist_roll_link">0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0.00203158 0.000339683 0.184568 0 0 0</pose>
+        <mass>7.818</mass>
+        <inertia><ixx>0.121698443</ixx><ixy>3.11092566e-05</ixy><ixz>-0.00374228948</ixz><iyy>0.109825081</iyy><iyz>-1.55074339e-05</iyz><izz>0.0275219757</izz></inertia>
+      </inertial>
+      <visual name="torso_link_rev_1_0_visual">
+        <geometry><mesh><uri>meshes/torso_link_rev_1_0.obj</uri></mesh></geometry>
+        <material><diffuse>0.7 0.7 0.7 1</diffuse></material>
+      </visual>
+      <visual name="logo_link_visual">
+        <pose>0.0039635 0 -0.044 0 0 0</pose>
+        <geometry><mesh><uri>meshes/logo_link.obj</uri></mesh></geometry>
+        <material><diffuse>0.2 0.2 0.2 1</diffuse></material>
+      </visual>
+      <visual name="head_link_visual">
+        <pose>0.0039635 0 -0.044 0 0 0</pose>
+        <geometry><mesh><uri>meshes/head_link.obj</uri></mesh></geometry>
+        <material><diffuse>0.2 0.2 0.2 1</diffuse></material>
+      </visual>
+      <collision name="torso_collision">
+        <pose>0.01 0 0.14 0 0 0</pose>
+        <geometry><capsule><radius>0.09</radius><length>0.12</length></capsule></geometry>
+        <drake:proximity_properties><drake:compliant_hydroelastic/>
+          <drake:hydroelastic_modulus>5e7</drake:hydroelastic_modulus>
+          <drake:mesh_resolution_hint>0.09</drake:mesh_resolution_hint>
+          <drake:hunt_crossley_dissipation>1.0</drake:hunt_crossley_dissipation>
+          <drake:mu_dynamic>0.6</drake:mu_dynamic><drake:mu_static>0.6</drake:mu_static>
+        </drake:proximity_properties>
+      </collision>
+      <collision name="head_collision">
+        <pose>0 0 0.43 0 0 0</pose>
+        <geometry><sphere><radius>0.06</radius></sphere></geometry>
+        <drake:proximity_properties><drake:compliant_hydroelastic/>
+          <drake:hydroelastic_modulus>5e7</drake:hydroelastic_modulus>
+          <drake:mesh_resolution_hint>0.06</drake:mesh_resolution_hint>
+          <drake:hunt_crossley_dissipation>1.0</drake:hunt_crossley_dissipation>
+          <drake:mu_dynamic>0.6</drake:mu_dynamic><drake:mu_static>0.6</drake:mu_static>
+        </drake:proximity_properties>
+      </collision>
+    </link>
+    <frame name="imu_in_torso" attached_to="torso_link"><pose>-0.03959 -0.00224 0.14792 0 0 0</pose></frame>
+    <joint name="waist_pitch_joint" type="revolute">
+      <parent>waist_roll_link</parent>
+      <child>torso_link</child>
+      <axis><xyz>0 1 0</xyz><limit><lower>-0.52</lower><upper>0.52</upper><effort>50</effort></limit></axis>
+      <drake:rotor_inertia>0.00721945</drake:rotor_inertia><drake:gear_ratio>1</drake:gear_ratio>
+      <drake:controller_gains p="28.5012462" d="1.81444569"/>
+    </joint>
+
+    <link name="left_shoulder_pitch_link">
+      <pose relative_to="torso_link">0.0039563 0.10022 0.24778 0.279309063 5.49488985e-05 -0.000191589978</pose>
+      <inertial>
+        <pose>0 0.035892 -0.011628 0 0 0</pose>
+        <mass>0.718</mass>
+        <inertia><ixx>0.000429099685</ixx><ixy>-9.20001783e-06</ixy><ixz>6.39978351e-06</ixz><iyy>0.000453000256</iyy><iyz>2.26001111e-05</iyz><izz>0.000423000059</izz></inertia>
+      </inertial>
+      <visual name="left_shoulder_pitch_link_visual">
+        <geometry><mesh><uri>meshes/left_shoulder_pitch_link.obj</uri></mesh></geometry>
+        <material><diffuse>0.7 0.7 0.7 1</diffuse></material>
+      </visual>
+    </link>
+    <joint name="left_shoulder_pitch_joint" type="revolute">
+      <parent>torso_link</parent>
+      <child>left_shoulder_pitch_link</child>
+      <axis><xyz>0 1 0</xyz><limit><lower>-3.0892</lower><upper>2.6704</upper><effort>25</effort></limit></axis>
+      <drake:rotor_inertia>0.003609725</drake:rotor_inertia><drake:gear_ratio>1</drake:gear_ratio>
+      <drake:controller_gains p="14.2506231" d="0.907222843"/>
+    </joint>
+
+    <link name="left_shoulder_roll_link">
+      <pose relative_to="left_shoulder_pitch_link">0 0.038 -0.013831 -0.279250519 0 0</pose>
+      <inertial>
+        <pose>-0.000227 0.00727 -0.063243 0 0 0</pose>
+        <mass>0.643</mass>
+        <inertia><ixx>0.000617699615</ixx><ixy>-1.00008224e-06</ixy><ixz>8.69999998e-06</ixz><iyy>0.000691199832</iyy><iyz>-5.30032372e-06</iyz><izz>0.000389399553</izz></inertia>
+      </inertial>
+      <visual name="left_shoulder_roll_link_visual">
+        <geometry><mesh><uri>meshes/left_shoulder_roll_link.obj</uri></mesh></geometry>
+        <material><diffuse>0.7 0.7 0.7 1</diffuse></material>
+      </visual>
+    </link>
+    <joint name="left_shoulder_roll_joint" type="revolute">
+      <parent>left_shoulder_pitch_link</parent>
+      <child>left_shoulder_roll_link</child>
+      <axis><xyz>1 0 0</xyz><limit><lower>-1.5882</lower><upper>2.2515</upper><effort>25</effort></limit></axis>
+      <drake:rotor_inertia>0.003609725</drake:rotor_inertia><drake:gear_ratio>1</drake:gear_ratio>
+      <drake:controller_gains p="14.2506231" d="0.907222843"/>
+    </joint>
+
+    <link name="left_shoulder_yaw_link">
+      <pose relative_to="left_shoulder_roll_link">0 0.00624 -0.1032 0 0 0</pose>
+      <inertial>
+        <pose>0.010773 -0.002949 -0.072009 0 0 0</pose>
+        <mass>0.734</mass>
+        <inertia><ixx>0.000998803887</ixx><ixy>7.89971003e-06</ixy><ixz>0.000141200796</ixz><iyy>0.00106049671</iyy><iyz>-2.85999284e-05</iyz><izz>0.000435400401</izz></inertia>
+      </inertial>
+      <visual name="left_shoulder_yaw_link_visual">
+        <geometry><mesh><uri>meshes/left_shoulder_yaw_link.obj</uri></mesh></geometry>
+        <material><diffuse>0.7 0.7 0.7 1</diffuse></material>
+      </visual>
+      <collision name="left_shoulder_yaw_collision">
+        <pose>0 0 -0.015 0 0 0</pose>
+        <geometry><capsule><radius>0.035</radius><length>0.13</length></capsule></geometry>
+        <drake:proximity_properties><drake:compliant_hydroelastic/>
+          <drake:hydroelastic_modulus>5e7</drake:hydroelastic_modulus>
+          <drake:mesh_resolution_hint>0.035</drake:mesh_resolution_hint>
+          <drake:hunt_crossley_dissipation>1.0</drake:hunt_crossley_dissipation>
+          <drake:mu_dynamic>0.6</drake:mu_dynamic><drake:mu_static>0.6</drake:mu_static>
+        </drake:proximity_properties>
+      </collision>
+    </link>
+    <joint name="left_shoulder_yaw_joint" type="revolute">
+      <parent>left_shoulder_roll_link</parent>
+      <child>left_shoulder_yaw_link</child>
+      <axis><xyz>0 0 1</xyz><limit><lower>-2.618</lower><upper>2.618</upper><effort>25</effort></limit></axis>
+      <drake:rotor_inertia>0.003609725</drake:rotor_inertia><drake:gear_ratio>1</drake:gear_ratio>
+      <drake:controller_gains p="14.2506231" d="0.907222843"/>
+    </joint>
+
+    <link name="left_elbow_link">
+      <pose relative_to="left_shoulder_yaw_link">0.015783 0 -0.080518 0 0 0</pose>
+      <inertial>
+        <pose>0.064956 0.004454 -0.010062 0 0 0</pose>
+        <mass>0.6</mass>
+        <inertia><ixx>0.000289099621</ixx><ixy>6.53001523e-05</ixy><ixz>1.7200109e-05</ixz><iyy>0.000415199974</iyy><iyz>-5.60008769e-06</iyz><izz>0.000419700405</izz></inertia>
+      </inertial>
+      <visual name="left_elbow_link_visual">
+        <geometry><mesh><uri>meshes/left_elbow_link.obj</uri></mesh></geometry>
+        <material><diffuse>0.7 0.7 0.7 1</diffuse></material>
+      </visual>
+      <collision name="left_elbow_yaw_collision">
+        <pose>0.035 0 -0.01 0 1.57079633 0</pose>
+        <geometry><capsule><radius>0.035</radius><length>0.09</length></capsule></geometry>
+        <drake:proximity_properties><drake:compliant_hydroelastic/>
+          <drake:hydroelastic_modulus>5e7</drake:hydroelastic_modulus>
+          <drake:mesh_resolution_hint>0.035</drake:mesh_resolution_hint>
+          <drake:hunt_crossley_dissipation>1.0</drake:hunt_crossley_dissipation>
+          <drake:mu_dynamic>0.6</drake:mu_dynamic><drake:mu_static>0.6</drake:mu_static>
+        </drake:proximity_properties>
+      </collision>
+    </link>
+    <joint name="left_elbow_joint" type="revolute">
+      <parent>left_shoulder_yaw_link</parent>
+      <child>left_elbow_link</child>
+      <axis><xyz>0 1 0</xyz><limit><lower>-1.0472</lower><upper>2.0944</upper><effort>25</effort></limit></axis>
+      <drake:rotor_inertia>0.003609725</drake:rotor_inertia><drake:gear_ratio>1</drake:gear_ratio>
+      <drake:controller_gains p="14.2506231" d="0.907222843"/>
+    </joint>
+
+    <link name="left_wrist_roll_link">
+      <pose relative_to="left_elbow_link">0.1 0.00188791 -0.01 0 0 0</pose>
+      <inertial>
+        <pose>0.0171394 0.000537591 4.8864e-07 0 0 0</pose>
+        <mass>0.085445</mass>
+        <inertia><ixx>4.82154499e-05</ixx><ixy>-4.24513719e-06</ixy><ixz>5.10750784e-09</ixz><iyy>3.72289555e-05</iyy><iyz>-1.23121329e-09</iyz><izz>5.48210947e-05</izz></inertia>
+      </inertial>
+      <visual name="left_wrist_roll_link_visual">
+        <geometry><mesh><uri>meshes/left_wrist_roll_link.obj</uri></mesh></geometry>
+        <material><diffuse>0.7 0.7 0.7 1</diffuse></material>
+      </visual>
+    </link>
+    <joint name="left_wrist_roll_joint" type="revolute">
+      <parent>left_elbow_link</parent>
+      <child>left_wrist_roll_link</child>
+      <axis><xyz>1 0 0</xyz><limit><lower>-1.97222</lower><upper>1.97222</upper><effort>25</effort></limit></axis>
+      <drake:rotor_inertia>0.003609725</drake:rotor_inertia><drake:gear_ratio>1</drake:gear_ratio>
+      <drake:controller_gains p="14.2506231" d="0.907222843"/>
+    </joint>
+
+    <link name="left_wrist_pitch_link">
+      <pose relative_to="left_wrist_roll_link">0.038 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0.0229999 -0.00111685 -0.00111658 0 0 0</pose>
+        <mass>0.48405</mass>
+        <inertia><ixx>0.000165796508</ixx><ixy>-1.23120447e-05</ixy><ixz>1.23169586e-05</ixz><iyy>0.000429540545</iyy><iyz>8.14248732e-07</iyz><izz>0.000429536947</izz></inertia>
+      </inertial>
+      <visual name="left_wrist_pitch_link_visual">
+        <geometry><mesh><uri>meshes/left_wrist_pitch_link.obj</uri></mesh></geometry>
+        <material><diffuse>0.7 0.7 0.7 1</diffuse></material>
+      </visual>
+      <collision name="left_wrist_collision">
+        <pose>0.025 0 0 0 1.57079633 0</pose>
+        <geometry><capsule><radius>0.035</radius><length>0.07</length></capsule></geometry>
+        <drake:proximity_properties><drake:compliant_hydroelastic/>
+          <drake:hydroelastic_modulus>5e7</drake:hydroelastic_modulus>
+          <drake:mesh_resolution_hint>0.035</drake:mesh_resolution_hint>
+          <drake:hunt_crossley_dissipation>1.0</drake:hunt_crossley_dissipation>
+          <drake:mu_dynamic>0.6</drake:mu_dynamic><drake:mu_static>0.6</drake:mu_static>
+        </drake:proximity_properties>
+      </collision>
+    </link>
+    <joint name="left_wrist_pitch_joint" type="revolute">
+      <parent>left_wrist_roll_link</parent>
+      <child>left_wrist_pitch_link</child>
+      <axis><xyz>0 1 0</xyz><limit><lower>-1.61443</lower><upper>1.61443</upper><effort>5</effort></limit></axis>
+      <drake:rotor_inertia>0.00425</drake:rotor_inertia><drake:gear_ratio>1</drake:gear_ratio>
+      <drake:controller_gains p="16.7783275" d="1.0681415"/>
+    </joint>
+
+    <link name="left_wrist_yaw_link">
+      <pose relative_to="left_wrist_pitch_link">0.046 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0.0708244 0.000191745 0.00161742 0 0 0</pose>
+        <mass>0.254576</mass>
+        <inertia><ixx>0.000150444826</ixx><ixy>3.76028907e-05</ixy><ixz>-2.95446719e-06</ixz><iyy>0.00064311365</iyy><iyz>3.77545185e-06</iyz><izz>0.000560113524</izz></inertia>
+      </inertial>
+      <visual name="left_wrist_yaw_link_visual">
+        <geometry><mesh><uri>meshes/left_wrist_yaw_link.obj</uri></mesh></geometry>
+        <material><diffuse>0.7 0.7 0.7 1</diffuse></material>
+      </visual>
+      <visual name="left_rubber_hand_visual">
+        <pose>0.0415 0.003 0 0 0 0</pose>
+        <geometry><mesh><uri>meshes/left_rubber_hand.obj</uri></mesh></geometry>
+        <material><diffuse>0.2 0.2 0.2 1</diffuse></material>
+      </visual>
+      <collision name="left_hand_collision">
+        <pose>0.11 -0.01 0 1.57079633 1.32581766 1.32581766</pose>
+        <geometry><capsule><radius>0.035</radius><length>0.0824621125</length></capsule></geometry>
+        <drake:proximity_properties><drake:compliant_hydroelastic/>
+          <drake:hydroelastic_modulus>5e7</drake:hydroelastic_modulus>
+          <drake:mesh_resolution_hint>0.035</drake:mesh_resolution_hint>
+          <drake:hunt_crossley_dissipation>1.0</drake:hunt_crossley_dissipation>
+          <drake:mu_dynamic>0.6</drake:mu_dynamic><drake:mu_static>0.6</drake:mu_static>
+        </drake:proximity_properties>
+      </collision>
+    </link>
+    <frame name="left_palm" attached_to="left_wrist_yaw_link"><pose>0.08 0 0 0 0 0</pose></frame>
+    <joint name="left_wrist_yaw_joint" type="revolute">
+      <parent>left_wrist_pitch_link</parent>
+      <child>left_wrist_yaw_link</child>
+      <axis><xyz>0 0 1</xyz><limit><lower>-1.61443</lower><upper>1.61443</upper><effort>5</effort></limit></axis>
+      <drake:rotor_inertia>0.00425</drake:rotor_inertia><drake:gear_ratio>1</drake:gear_ratio>
+      <drake:controller_gains p="16.7783275" d="1.0681415"/>
+    </joint>
+
+    <link name="right_shoulder_pitch_link">
+      <pose relative_to="torso_link">0.0039563 -0.10021 0.24778 -0.279309063 5.49488985e-05 0.000191589978</pose>
+      <inertial>
+        <pose>0 -0.035892 -0.011628 0 0 0</pose>
+        <mass>0.718</mass>
+        <inertia><ixx>0.000429099685</ixx><ixy>9.20001783e-06</ixy><ixz>6.39978351e-06</ixz><iyy>0.000453000256</iyy><iyz>-2.26001111e-05</iyz><izz>0.000423000059</izz></inertia>
+      </inertial>
+      <visual name="right_shoulder_pitch_link_visual">
+        <geometry><mesh><uri>meshes/right_shoulder_pitch_link.obj</uri></mesh></geometry>
+        <material><diffuse>0.7 0.7 0.7 1</diffuse></material>
+      </visual>
+    </link>
+    <joint name="right_shoulder_pitch_joint" type="revolute">
+      <parent>torso_link</parent>
+      <child>right_shoulder_pitch_link</child>
+      <axis><xyz>0 1 0</xyz><limit><lower>-3.0892</lower><upper>2.6704</upper><effort>25</effort></limit></axis>
+      <drake:rotor_inertia>0.003609725</drake:rotor_inertia><drake:gear_ratio>1</drake:gear_ratio>
+      <drake:controller_gains p="14.2506231" d="0.907222843"/>
+    </joint>
+
+    <link name="right_shoulder_roll_link">
+      <pose relative_to="right_shoulder_pitch_link">0 -0.038 -0.013831 0.279250519 0 0</pose>
+      <inertial>
+        <pose>-0.000227 -0.00727 -0.063243 0 0 0</pose>
+        <mass>0.643</mass>
+        <inertia><ixx>0.000617699615</ixx><ixy>1.00008224e-06</ixy><ixz>8.69999998e-06</ixz><iyy>0.000691199832</iyy><iyz>5.30032372e-06</iyz><izz>0.000389399553</izz></inertia>
+      </inertial>
+      <visual name="right_shoulder_roll_link_visual">
+        <geometry><mesh><uri>meshes/right_shoulder_roll_link.obj</uri></mesh></geometry>
+        <material><diffuse>0.7 0.7 0.7 1</diffuse></material>
+      </visual>
+    </link>
+    <joint name="right_shoulder_roll_joint" type="revolute">
+      <parent>right_shoulder_pitch_link</parent>
+      <child>right_shoulder_roll_link</child>
+      <axis><xyz>1 0 0</xyz><limit><lower>-2.2515</lower><upper>1.5882</upper><effort>25</effort></limit></axis>
+      <drake:rotor_inertia>0.003609725</drake:rotor_inertia><drake:gear_ratio>1</drake:gear_ratio>
+      <drake:controller_gains p="14.2506231" d="0.907222843"/>
+    </joint>
+
+    <link name="right_shoulder_yaw_link">
+      <pose relative_to="right_shoulder_roll_link">0 -0.00624 -0.1032 0 0 0</pose>
+      <inertial>
+        <pose>0.010773 0.002949 -0.072009 0 0 0</pose>
+        <mass>0.734</mass>
+        <inertia><ixx>0.000998803887</ixx><ixy>-7.89971003e-06</ixy><ixz>0.000141200796</ixz><iyy>0.00106049671</iyy><iyz>2.85999284e-05</iyz><izz>0.000435400401</izz></inertia>
+      </inertial>
+      <visual name="right_shoulder_yaw_link_visual">
+        <geometry><mesh><uri>meshes/right_shoulder_yaw_link.obj</uri></mesh></geometry>
+        <material><diffuse>0.7 0.7 0.7 1</diffuse></material>
+      </visual>
+      <collision name="right_shoulder_yaw_collision">
+        <pose>0 0 -0.015 0 0 0</pose>
+        <geometry><capsule><radius>0.035</radius><length>0.13</length></capsule></geometry>
+        <drake:proximity_properties><drake:compliant_hydroelastic/>
+          <drake:hydroelastic_modulus>5e7</drake:hydroelastic_modulus>
+          <drake:mesh_resolution_hint>0.035</drake:mesh_resolution_hint>
+          <drake:hunt_crossley_dissipation>1.0</drake:hunt_crossley_dissipation>
+          <drake:mu_dynamic>0.6</drake:mu_dynamic><drake:mu_static>0.6</drake:mu_static>
+        </drake:proximity_properties>
+      </collision>
+    </link>
+    <joint name="right_shoulder_yaw_joint" type="revolute">
+      <parent>right_shoulder_roll_link</parent>
+      <child>right_shoulder_yaw_link</child>
+      <axis><xyz>0 0 1</xyz><limit><lower>-2.618</lower><upper>2.618</upper><effort>25</effort></limit></axis>
+      <drake:rotor_inertia>0.003609725</drake:rotor_inertia><drake:gear_ratio>1</drake:gear_ratio>
+      <drake:controller_gains p="14.2506231" d="0.907222843"/>
+    </joint>
+
+    <link name="right_elbow_link">
+      <pose relative_to="right_shoulder_yaw_link">0.015783 0 -0.080518 0 0 0</pose>
+      <inertial>
+        <pose>0.064956 -0.004454 -0.010062 0 0 0</pose>
+        <mass>0.6</mass>
+        <inertia><ixx>0.000289099621</ixx><ixy>-6.53001523e-05</ixy><ixz>1.7200109e-05</ixz><iyy>0.000415199974</iyy><iyz>5.60008769e-06</iyz><izz>0.000419700405</izz></inertia>
+      </inertial>
+      <visual name="right_elbow_link_visual">
+        <geometry><mesh><uri>meshes/right_elbow_link.obj</uri></mesh></geometry>
+        <material><diffuse>0.7 0.7 0.7 1</diffuse></material>
+      </visual>
+      <collision name="right_elbow_yaw_collision">
+        <pose>0.035 0 -0.01 0 1.57079633 0</pose>
+        <geometry><capsule><radius>0.035</radius><length>0.09</length></capsule></geometry>
+        <drake:proximity_properties><drake:compliant_hydroelastic/>
+          <drake:hydroelastic_modulus>5e7</drake:hydroelastic_modulus>
+          <drake:mesh_resolution_hint>0.035</drake:mesh_resolution_hint>
+          <drake:hunt_crossley_dissipation>1.0</drake:hunt_crossley_dissipation>
+          <drake:mu_dynamic>0.6</drake:mu_dynamic><drake:mu_static>0.6</drake:mu_static>
+        </drake:proximity_properties>
+      </collision>
+    </link>
+    <joint name="right_elbow_joint" type="revolute">
+      <parent>right_shoulder_yaw_link</parent>
+      <child>right_elbow_link</child>
+      <axis><xyz>0 1 0</xyz><limit><lower>-1.0472</lower><upper>2.0944</upper><effort>25</effort></limit></axis>
+      <drake:rotor_inertia>0.003609725</drake:rotor_inertia><drake:gear_ratio>1</drake:gear_ratio>
+      <drake:controller_gains p="14.2506231" d="0.907222843"/>
+    </joint>
+
+    <link name="right_wrist_roll_link">
+      <pose relative_to="right_elbow_link">0.1 -0.00188791 -0.01 0 0 0</pose>
+      <inertial>
+        <pose>0.0171394 -0.000537591 4.8864e-07 0 0 0</pose>
+        <mass>0.085445</mass>
+        <inertia><ixx>4.82154499e-05</ixx><ixy>4.24513719e-06</ixy><ixz>5.10750784e-09</ixz><iyy>3.72289555e-05</iyy><iyz>1.23121329e-09</iyz><izz>5.48210947e-05</izz></inertia>
+      </inertial>
+      <visual name="right_wrist_roll_link_visual">
+        <geometry><mesh><uri>meshes/right_wrist_roll_link.obj</uri></mesh></geometry>
+        <material><diffuse>0.7 0.7 0.7 1</diffuse></material>
+      </visual>
+    </link>
+    <joint name="right_wrist_roll_joint" type="revolute">
+      <parent>right_elbow_link</parent>
+      <child>right_wrist_roll_link</child>
+      <axis><xyz>1 0 0</xyz><limit><lower>-1.97222</lower><upper>1.97222</upper><effort>25</effort></limit></axis>
+      <drake:rotor_inertia>0.003609725</drake:rotor_inertia><drake:gear_ratio>1</drake:gear_ratio>
+      <drake:controller_gains p="14.2506231" d="0.907222843"/>
+    </joint>
+
+    <link name="right_wrist_pitch_link">
+      <pose relative_to="right_wrist_roll_link">0.038 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0.0229999 0.00111685 -0.00111658 0 0 0</pose>
+        <mass>0.48405</mass>
+        <inertia><ixx>0.000165796508</ixx><ixy>1.23120447e-05</ixy><ixz>1.23169586e-05</ixz><iyy>0.000429540545</iyy><iyz>-8.14248732e-07</iyz><izz>0.000429536947</izz></inertia>
+      </inertial>
+      <visual name="right_wrist_pitch_link_visual">
+        <geometry><mesh><uri>meshes/right_wrist_pitch_link.obj</uri></mesh></geometry>
+        <material><diffuse>0.7 0.7 0.7 1</diffuse></material>
+      </visual>
+      <collision name="right_wrist_collision">
+        <pose>0.025 0 0 0 1.57079633 0</pose>
+        <geometry><capsule><radius>0.035</radius><length>0.07</length></capsule></geometry>
+        <drake:proximity_properties><drake:compliant_hydroelastic/>
+          <drake:hydroelastic_modulus>5e7</drake:hydroelastic_modulus>
+          <drake:mesh_resolution_hint>0.035</drake:mesh_resolution_hint>
+          <drake:hunt_crossley_dissipation>1.0</drake:hunt_crossley_dissipation>
+          <drake:mu_dynamic>0.6</drake:mu_dynamic><drake:mu_static>0.6</drake:mu_static>
+        </drake:proximity_properties>
+      </collision>
+    </link>
+    <joint name="right_wrist_pitch_joint" type="revolute">
+      <parent>right_wrist_roll_link</parent>
+      <child>right_wrist_pitch_link</child>
+      <axis><xyz>0 1 0</xyz><limit><lower>-1.61443</lower><upper>1.61443</upper><effort>5</effort></limit></axis>
+      <drake:rotor_inertia>0.00425</drake:rotor_inertia><drake:gear_ratio>1</drake:gear_ratio>
+      <drake:controller_gains p="16.7783275" d="1.0681415"/>
+    </joint>
+
+    <link name="right_wrist_yaw_link">
+      <pose relative_to="right_wrist_pitch_link">0.046 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0.0708244 -0.000191745 0.00161742 0 0 0</pose>
+        <mass>0.254576</mass>
+        <inertia><ixx>0.000150444826</ixx><ixy>-3.76028907e-05</ixy><ixz>-2.95446719e-06</ixz><iyy>0.00064311365</iyy><iyz>-3.77545185e-06</iyz><izz>0.000560113524</izz></inertia>
+      </inertial>
+      <visual name="right_wrist_yaw_link_visual">
+        <geometry><mesh><uri>meshes/right_wrist_yaw_link.obj</uri></mesh></geometry>
+        <material><diffuse>0.7 0.7 0.7 1</diffuse></material>
+      </visual>
+      <visual name="right_rubber_hand_visual">
+        <pose>0.0415 -0.003 0 0 0 0</pose>
+        <geometry><mesh><uri>meshes/right_rubber_hand.obj</uri></mesh></geometry>
+        <material><diffuse>0.2 0.2 0.2 1</diffuse></material>
+      </visual>
+      <collision name="right_hand_collision">
+        <pose>0.11 0.01 0 -1.57079633 1.32581766 -1.32581766</pose>
+        <geometry><capsule><radius>0.035</radius><length>0.0824621125</length></capsule></geometry>
+        <drake:proximity_properties><drake:compliant_hydroelastic/>
+          <drake:hydroelastic_modulus>5e7</drake:hydroelastic_modulus>
+          <drake:mesh_resolution_hint>0.035</drake:mesh_resolution_hint>
+          <drake:hunt_crossley_dissipation>1.0</drake:hunt_crossley_dissipation>
+          <drake:mu_dynamic>0.6</drake:mu_dynamic><drake:mu_static>0.6</drake:mu_static>
+        </drake:proximity_properties>
+      </collision>
+    </link>
+    <frame name="right_palm" attached_to="right_wrist_yaw_link"><pose>0.08 0 0 0 0 0</pose></frame>
+    <joint name="right_wrist_yaw_joint" type="revolute">
+      <parent>right_wrist_pitch_link</parent>
+      <child>right_wrist_yaw_link</child>
+      <axis><xyz>0 0 1</xyz><limit><lower>-1.61443</lower><upper>1.61443</upper><effort>5</effort></limit></axis>
+      <drake:rotor_inertia>0.00425</drake:rotor_inertia><drake:gear_ratio>1</drake:gear_ratio>
+      <drake:controller_gains p="16.7783275" d="1.0681415"/>
+    </joint>
+
+    <drake:collision_filter_group name="exclude0">
+      <drake:member>left_elbow_link</drake:member><drake:member>left_wrist_pitch_link</drake:member>
+      <drake:ignored_collision_filter_group>exclude0</drake:ignored_collision_filter_group>
+    </drake:collision_filter_group>
+    <drake:collision_filter_group name="exclude1">
+      <drake:member>right_elbow_link</drake:member><drake:member>right_wrist_pitch_link</drake:member>
+      <drake:ignored_collision_filter_group>exclude1</drake:ignored_collision_filter_group>
+    </drake:collision_filter_group>
+    <drake:collision_filter_group name="exclude2">
+      <drake:member>pelvis</drake:member><drake:member>right_hip_roll_link</drake:member>
+      <drake:ignored_collision_filter_group>exclude2</drake:ignored_collision_filter_group>
+    </drake:collision_filter_group>
+    <drake:collision_filter_group name="exclude3">
+      <drake:member>pelvis</drake:member><drake:member>left_hip_roll_link</drake:member>
+      <drake:ignored_collision_filter_group>exclude3</drake:ignored_collision_filter_group>
+    </drake:collision_filter_group>
+  </model>
+</sdf>

@@ -1,0 +1,13 @@
+{
+  "intro": "<p>Training went through four stages. Watch the videos in order and keep an eye on the <b>Mean episode length</b> and <b>Linear velocity tracking reward</b> charts.</p><p><b>1. Flailing (0–25).</b> Random actions; the robot falls in about 1.7 s. <b>2. Giving up (25–100).</b> Episodes get <i>shorter</i>. Every step costs a little penalty and the robot can't earn the walking reward yet, so ending the episode fast is the best deal on offer: the policy learns to fall on purpose. <b>3. Standing still (150–550).</b> Once the upright and pose rewards outweigh the penalties, survival pays. The policy finds the safest way to collect them: stand and ignore the commands. <b>4. Walking (550+).</b> Episodes jump to the 20 s limit in about 60 iterations (orange band). Only after that does the velocity tracking reward climb, and later iterations spend most of their effort on accuracy and smoothness.</p>",
+  "0": "Random network, exploration off. It never walks and topples about every 1.7 s, then respawns (11 falls). The 12 m 'distance' is mostly falling and stumbling, not walking.",
+  "50": "The 'give up' phase: 125 falls in 20 s, roughly one every 8 steps. This is a policy that learned that ending the episode immediately loses the least reward. Compare the episode length chart, which drops to about 8 at this iteration.",
+  "150": "It has started to value staying up. It survives about 1.7 s at a time and has learned some balance reflexes, but there's no stepping yet.",
+  "250": "Zero falls for the first time. It stands still for the whole 20 s and ignores every command (0.4 m traveled). This is a local optimum: the upright and pose rewards are easy, and walking is risky.",
+  "400": "Still standing still and still not falling. Training reward is flat here. It is slowly building the stability needed to move, but nothing shows on the course yet.",
+  "550": "Inside the breakthrough band. Still mostly standing on this course (0.9 m), though some of the 4096 training robots are starting to survive full episodes.",
+  "600": "Training robots now survive about 94% of the time limit, yet this one still stands. Survival came first; following the command comes next.",
+  "800": "Walking. It follows forward, turn and sideways commands (5.8 m traveled), with speed error down to 0.19 m/s. The gait is cautious and the turns lag.",
+  "1500": "Tracks the course well (speed error 0.11 m/s). Since 800, the gains have come from accuracy and smoothness, not from new skills.",
+  "2999": "Final policy: speed error 0.10 m/s, turn error 0.06 rad/s, 7.6 m of the ideal 8.7 m. Almost everything after about 1500 iterations is polish."
+}

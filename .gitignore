@@ -1,0 +1,19 @@
+__pycache__/
+*.py[oc]
+*.egg-info/
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# Drake env (SB3) training output
+drake-env/runs/
+
+# mjlab training output: keep only the final policy, TensorBoard logs,
+# configs and the progress report; checkpoints and full videos stay local.
+mjlab/logs/*
+!mjlab/logs/rsl_rl/
+mjlab/logs/rsl_rl/*
+!mjlab/logs/rsl_rl/g1_velocity/
+mjlab/logs/rsl_rl/g1_velocity/*/model_*.pt
+!mjlab/logs/rsl_rl/g1_velocity/*/model_2999.pt
+mjlab/logs/rsl_rl/g1_velocity/*/progress/iter_*.mp4

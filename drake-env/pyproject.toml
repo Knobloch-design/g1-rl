@@ -1,0 +1,43 @@
+[project]
+name = "g1-walking"
+version = "0.1.0"
+description = "Reinforcement learning for the Unitree G1 in Drake."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "drake>=1.57",
+    "gymnasium>=1.0",
+    "numpy",
+]
+
+[project.optional-dependencies]
+train = [
+    "stable-baselines3>=2.4",
+    "tensorboard",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "ruff",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["g1_walking*"]
+
+[tool.setuptools.package-data]
+g1_walking = ["models/**/*"]
+
+[tool.ruff]
+line-length = 80
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

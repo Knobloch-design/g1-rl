@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>G1 Training Progress</title>
+<style>
+:root {
+  color-scheme: light;
+  --page: #f9f9f7;
+  --surface: #fcfcfb;
+  --ink: #0b0b0b;
+  --ink-2: #52514e;
+  --muted: #898781;
+  --grid: #e1e0d9;
+  --axis: #c3c2b7;
+  --border: rgba(11,11,11,0.10);
+  --series: #2a78d6;
+  --accent: #eb6834;
+  --band: rgba(235,104,52,0.10);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --page: #0d0d0d;
+    --surface: #1a1a19;
+    --ink: #f0efec;
+    --ink-2: #c3c2b7;
+    --grid: #2c2c2a;
+    --axis: #383835;
+    --border: rgba(255,255,255,0.10);
+    --series: #3987e5;
+    --accent: #d95926;
+    --band: rgba(217,89,38,0.16);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #0d0d0d;
+  --surface: #1a1a19;
+  --ink: #f0efec;
+  --ink-2: #c3c2b7;
+  --grid: #2c2c2a;
+  --axis: #383835;
+  --border: rgba(255,255,255,0.10);
+  --series: #3987e5;
+  --accent: #d95926;
+  --band: rgba(217,89,38,0.16);
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--page); color: var(--ink);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+main { max-width: 1200px; margin: 0 auto; padding: 32px 16px 64px; }
+h1 { font-size: 26px; margin: 0 0 4px; }
+h2 { font-size: 19px; margin: 40px 0 2px; }
+.sub, .blurb { color: var(--ink-2); margin: 0 0 16px; }
+.intro { max-width: 760px; color: var(--ink-2); }
+.intro p { margin: 0 0 10px; }
+
+.player { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 20px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+.player video { width: 100%; border-radius: 6px; background: #000; display: block; }
+.player h3 { margin: 0 0 6px; font-size: 18px; }
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; margin: 12px 0; }
+.stat .v { font-size: 22px; font-variant-numeric: tabular-nums; }
+.stat .k { font-size: 12px; color: var(--muted); }
+.note { color: var(--ink-2); }
+
+.strip { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 8px; margin: 12px 0 0; }
+.thumb { appearance: none; border: 2px solid transparent; border-radius: 8px; padding: 0;
+  background: var(--surface); color: var(--ink); cursor: pointer; text-align: left; overflow: hidden; }
+.thumb img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; background: var(--grid); }
+.thumb span { display: block; padding: 4px 6px; font-size: 12px; font-variant-numeric: tabular-nums; }
+.thumb[aria-pressed="true"] { border-color: var(--accent); }
+.thumb:focus-visible { outline: 2px solid var(--series); outline-offset: 2px; }
+
+.charts { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; }
+.chart { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 12px 8px; }
+.chart h4 { margin: 0; font-size: 14px; }
+.chart p { margin: 2px 0 6px; font-size: 12px; color: var(--ink-2); min-height: 36px; }
+.chart svg { width: 100%; height: 170px; display: block; overflow: visible; }
+.chart text { fill: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+.legend { font-size: 12px; color: var(--muted); margin-top: 8px; display: flex; gap: 16px; flex-wrap: wrap; }
+.legend i { display: inline-block; width: 14px; height: 2px; vertical-align: middle; margin-right: 4px; }
+#tip { position: fixed; pointer-events: none; background: var(--surface); color: var(--ink);
+  border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; font-size: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.15); display: none; font-variant-numeric: tabular-nums; z-index: 5; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; font-variant-numeric: tabular-nums; }
+th, td { padding: 6px 8px; border-bottom: 1px solid var(--grid); text-align: right; }
+th:first-child, td:first-child { text-align: left; }
+th { color: var(--ink-2); font-weight: 600; }
+.tablewrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 8px; }
+@media (max-width: 800px) {
+  .player { grid-template-columns: 1fr; }
+  .strip { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+}
+</style>
+</head>
+<body>
+<main>
+  <h1>G1 training progress</h1>
+  <p class="sub" id="runname"></p>
+  <div class="intro" id="intro"></div>
+
+  <h2>Ten attempts on the same course</h2>
+  <p class="blurb">Same robot, same seed, no exploration noise. Course: stand 3 s, forward 0.8 m/s, forward + turn, sidestep, backward, stand. Pick one; its iteration is marked on every chart below.</p>
+  <div class="player">
+    <video id="video" controls muted playsinline preload="metadata"></video>
+    <div>
+      <h3 id="ptitle"></h3>
+      <div class="stats" id="pstats"></div>
+      <p class="note" id="pnote"></p>
+    </div>
+  </div>
+  <div class="strip" id="strip"></div>
+
+  <div id="sections"></div>
+
+  <h2>Attempt metrics</h2>
+  <p class="blurb">Measured on the eval course. Tracking errors only count time the robot was up.</p>
+  <div class="tablewrap"><table id="table"></table></div>
+</main>
+<div id="tip"></div>
+<script>
+const DATA = __DATA__;
+const BREAK = [520, 620];  // iterations where episode length jumped from ~300 to ~950
+let selected = DATA.attempts.length - 1;
+let hoverIt = null;
+const charts = [];
+
+document.getElementById("runname").textContent = "Run " + DATA.run + " · 3000 iterations · 98,304 samples per iteration";
+document.getElementById("intro").innerHTML = DATA.intro;
+
+const fmt = v => {
+  if (v === "" || v == null || Number.isNaN(+v)) return "–";
+  v = +v; const a = Math.abs(v);
+  if (a === 0) return "0";
+  if (a >= 100) return v.toFixed(0);
+  if (a >= 1) return v.toFixed(2);
+  if (a >= 0.01) return v.toFixed(3);
+  return v.toExponential(1);
+};
+
+// ---------- attempts ----------
+const strip = document.getElementById("strip");
+DATA.attempts.forEach((a, i) => {
+  const b = document.createElement("button");
+  b.className = "thumb";
+  b.innerHTML = (a.still ? `<img src="${a.still}" alt="">` : `<img alt="">`) +
+    `<span>it ${a.iteration} · ${a.falls} fall${a.falls == 1 ? "" : "s"}</span>`;
+  b.onclick = () => select(i, true);
+  strip.appendChild(b);
+});
+
+function select(i, play) {
+  selected = i;
+  const a = DATA.attempts[i];
+  const v = document.getElementById("video");
+  v.src = `iter_${String(a.iteration).padStart(5, "0")}.mp4`;
+  if (play) v.play().catch(() => {});
+  document.getElementById("ptitle").textContent =
+    `Iteration ${a.iteration} · ${(a.training_steps / 1e6).toFixed(1)}M training steps`;
+  const stats = [
+    ["Falls in 20 s", a.falls],
+    ["First fall at", a.time_to_first_fall_s === "" ? "never" : (+a.time_to_first_fall_s).toFixed(1) + " s"],
+    ["Speed error (m/s)", fmt(a.mean_lin_vel_error)],
+    ["Turn-rate error (rad/s)", fmt(a.mean_yaw_rate_error)],
+    ["Distance covered", fmt(a.distance_m) + " m"],
+  ];
+  document.getElementById("pstats").innerHTML = stats.map(([k, v]) =>
+    `<div class="stat"><div class="v">${v}</div><div class="k">${k}</div></div>`).join("");
+  document.getElementById("pnote").textContent = a.note;
+  [...strip.children].forEach((b, j) => b.setAttribute("aria-pressed", j === i));
+  charts.forEach(c => c.draw());
+}
+
+// ---------- charts ----------
+const NS = "http://www.w3.org/2000/svg";
+const el = (tag, attrs, parent) => {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+};
+
+function ema(points, alpha) {
+  let s = null;
+  return points.map(([x, y]) => { s = s == null ? y : alpha * y + (1 - alpha) * s; return [x, s]; });
+}
+
+function niceTicks(lo, hi, n) {
+  const span = hi - lo || 1, step0 = span / n;
+  const mag = Math.pow(10, Math.floor(Math.log10(step0)));
+  const step = [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => span / s <= n) || 10 * mag;
+  const out = [];
+  for (let t = Math.ceil(lo / step) * step; t <= hi + 1e-9; t += step) out.push(+t.toPrecision(6));
+  return out;
+}
+
+function makeChart(host, spec) {
+  const raw = DATA.series[spec.tag];
+  const smooth = ema(raw, 0.08);
+  const box = document.createElement("div");
+  box.className = "chart";
+  box.innerHTML = `<h4>${spec.title}</h4><p>${spec.explain}</p>`;
+  host.appendChild(box);
+  const svg = el("svg", { role: "img", "aria-label": spec.title }, box);
+  const M = { l: 44, r: 8, t: 8, b: 22 };
+  const log = !!spec.log;
+  const ys = raw.map(p => p[1]).filter(v => !log || v > 0);
+  let lo = spec.ymin ?? Math.min(...ys), hi = spec.ymax ?? Math.max(...ys);
+  if (spec.ref != null) { lo = Math.min(lo, spec.ref); hi = Math.max(hi, spec.ref); }
+  if (!log && spec.ymin == null && lo > 0 && lo < hi * 0.5) lo = 0;
+  const xmax = raw[raw.length - 1][0];
+
+  const chart = {
+    draw() {
+      svg.innerHTML = "";
+      const W = svg.clientWidth || 340, H = svg.clientHeight || 170;
+      const iw = W - M.l - M.r, ih = H - M.t - M.b;
+      const X = x => M.l + (x / xmax) * iw;
+      const tf = log ? Math.log10 : (v => v);
+      const Y = v => M.t + ih - (tf(Math.max(v, log ? 1e-12 : -Infinity)) - tf(lo)) / (tf(hi) - tf(lo) || 1) * ih;
+
+      el("rect", { x: X(BREAK[0]), y: M.t, width: X(BREAK[1]) - X(BREAK[0]), height: ih, fill: "var(--band)" }, svg);
+
+      const yt = log
+        ? niceTicks(Math.floor(Math.log10(lo)), Math.ceil(Math.log10(hi)), 4).map(e => Math.pow(10, e)).filter(v => v >= lo * 0.999 && v <= hi * 1.001)
+        : niceTicks(lo, hi, 4);
+      yt.forEach(v => {
+        el("line", { x1: M.l, x2: W - M.r, y1: Y(v), y2: Y(v), stroke: "var(--grid)", "stroke-width": 1 }, svg);
+        const t = el("text", { x: M.l - 6, y: Y(v) + 4, "text-anchor": "end" }, svg);
+        t.textContent = fmt(v);
+      });
+      niceTicks(0, xmax, 5).forEach(v => {
+        const t = el("text", { x: X(v), y: H - 6, "text-anchor": "middle" }, svg);
+        t.textContent = v;
+      });
+      el("line", { x1: M.l, x2: W - M.r, y1: M.t + ih, y2: M.t + ih, stroke: "var(--axis)" }, svg);
+
+      if (spec.ref != null) {
+        el("line", { x1: M.l, x2: W - M.r, y1: Y(spec.ref), y2: Y(spec.ref), stroke: "var(--ink-2)",
+          "stroke-dasharray": "4 3", "stroke-width": 1 }, svg);
+      }
+
+      // Checkpoint ticks along the bottom; the selected one becomes a full line.
+      DATA.attempts.forEach((a, i) => {
+        const x = X(+a.iteration);
+        if (i === selected) {
+          el("line", { x1: x, x2: x, y1: M.t, y2: M.t + ih, stroke: "var(--accent)", "stroke-width": 2 }, svg);
+        } else {
+          el("line", { x1: x, x2: x, y1: M.t + ih - 6, y2: M.t + ih, stroke: "var(--accent)", "stroke-width": 2 }, svg);
+        }
+      });
+
+      const path = pts => pts.map((p, i) => (i ? "L" : "M") + X(p[0]).toFixed(1) + " " + Y(p[1]).toFixed(1)).join("");
+      el("path", { d: path(raw), fill: "none", stroke: "var(--series)", "stroke-opacity": 0.25, "stroke-width": 1 }, svg);
+      el("path", { d: path(smooth), fill: "none", stroke: "var(--series)", "stroke-width": 2,
+        "stroke-linejoin": "round", "stroke-linecap": "round" }, svg);
+
+      if (hoverIt != null) {
+        const i = nearest(raw, hoverIt);
+        const x = X(raw[i][0]);
+        el("line", { x1: x, x2: x, y1: M.t, y2: M.t + ih, stroke: "var(--ink-2)", "stroke-width": 1 }, svg);
+        el("circle", { cx: x, cy: Y(smooth[i][1]), r: 4, fill: "var(--series)", stroke: "var(--surface)", "stroke-width": 2 }, svg);
+      }
+      chart.geom = { X, iw, M };
+    },
+  };
+
+  const tip = document.getElementById("tip");
+  svg.addEventListener("pointermove", ev => {
+    const r = svg.getBoundingClientRect();
+    const { M, iw } = chart.geom;
+    const it = Math.max(0, Math.min(xmax, ((ev.clientX - r.left - M.l) / iw) * xmax));
+    hoverIt = it;
+    charts.forEach(c => c.draw());
+    const i = nearest(raw, it);
+    const cp = DATA.attempts.find(a => Math.abs(+a.iteration - raw[i][0]) <= xmax / 150);
+    tip.innerHTML = `<b>iteration ${raw[i][0]}</b><br>${spec.title}: ${fmt(raw[i][1])}` +
+      `<br>smoothed: ${fmt(smooth[i][1])}` + (cp ? `<br>checkpoint ${cp.iteration}, click to watch` : "");
+    tip.style.display = "block";
+    tip.style.left = Math.min(ev.clientX + 14, innerWidth - 220) + "px";
+    tip.style.top = (ev.clientY + 14) + "px";
+  });
+  svg.addEventListener("pointerleave", () => { hoverIt = null; tip.style.display = "none"; charts.forEach(c => c.draw()); });
+  svg.addEventListener("click", () => {
+    if (hoverIt == null) return;
+    let best = 0;
+    DATA.attempts.forEach((a, i) => {
+      if (Math.abs(+a.iteration - hoverIt) < Math.abs(+DATA.attempts[best].iteration - hoverIt)) best = i;
+    });
+    select(best, true);
+    document.querySelector(".player").scrollIntoView({ behavior: "smooth", block: "center" });
+  });
+  charts.push(chart);
+}
+
+function nearest(pts, x) {
+  let lo = 0, hi = pts.length - 1;
+  while (hi - lo > 1) { const m = (lo + hi) >> 1; if (pts[m][0] < x) lo = m; else hi = m; }
+  return Math.abs(pts[lo][0] - x) <= Math.abs(pts[hi][0] - x) ? lo : hi;
+}
+
+const sectionsHost = document.getElementById("sections");
+DATA.sections.forEach(s => {
+  const h = document.createElement("h2"); h.textContent = s.title; sectionsHost.appendChild(h);
+  const p = document.createElement("p"); p.className = "blurb"; p.textContent = s.blurb; sectionsHost.appendChild(p);
+  const grid = document.createElement("div"); grid.className = "charts"; sectionsHost.appendChild(grid);
+  s.charts.forEach(c => makeChart(grid, c));
+});
+const legend = document.createElement("div");
+legend.className = "legend";
+legend.innerHTML = `<span><i style="background:var(--series)"></i>smoothed</span>` +
+  `<span><i style="background:var(--series);opacity:.3"></i>raw per iteration</span>` +
+  `<span><i style="background:var(--accent)"></i>checkpoints with videos (selected = full line)</span>` +
+  `<span><i style="background:var(--band);height:10px"></i>iterations ${BREAK[0]}–${BREAK[1]}: the breakthrough</span>` +
+  `<span><i style="border-top:1px dashed var(--ink-2);height:0"></i>target / limit</span>`;
+sectionsHost.prepend(legend);
+
+// ---------- table ----------
+const cols = [["iteration", "Iteration"], ["falls", "Falls"], ["time_to_first_fall_s", "First fall (s)"],
+  ["mean_lin_vel_error", "Speed error (m/s)"], ["mean_yaw_rate_error", "Turn error (rad/s)"], ["distance_m", "Distance (m)"]];
+document.getElementById("table").innerHTML =
+  "<thead><tr>" + cols.map(c => `<th>${c[1]}</th>`).join("") + "</tr></thead><tbody>" +
+  DATA.attempts.map(a => "<tr>" + cols.map(([k]) => `<td>${k === "iteration" || k === "falls" ? a[k] : fmt(a[k])}</td>`).join("") + "</tr>").join("") +
+  "</tbody>";
+
+addEventListener("resize", () => charts.forEach(c => c.draw()));
+select(selected, false);
+</script>
+</body>
+</html>
