@@ -1,0 +1,2 @@
+run,label,kind,checkpoint,wall_time_s,env_steps,ep_return,ep_survival,ep_length,ep_err_vel_xy,ep_err_vel_yaw,course_falls,course_no_fall_frac,course_err_vel_xy,course_err_vel_yaw,course_distance_m
+2026-10-31_18-05-16_tracked,ppo_mlp512x256x128_adam,ppo,2999,9487.047181367874,294813696,99.29693603515625,0.998046875,998.5576171875,0.1885274052619934,0.1480664759874344,0.0,1.0,0.0958319678902626,0.057902488857507706,7.784910678863525
