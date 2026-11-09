@@ -1,0 +1,23 @@
+--- git commit ---
+4936298ff12c4811ce5e8609e8fd502a8535da91
+
+
+--- git status ---
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	mjlab/ES_EXPERIMENTS.md
+	mjlab/compare_runs.py
+	mjlab/es/
+	mjlab/eval_runs.py
+	mjlab/logs/rsl_rl/g1_velocity/2026-10-31_18-05-16_tracked/eval.csv
+	mjlab/logs/rsl_rl/g1_velocity/2026-11-08_17-05-21_adam_big/
+	mjlab/run_overnight.sh
+	mjlab/train_es.py
+
+nothing added to commit but untracked files present (use "git add" to track) 
+
+
+--- git diff ---

@@ -23,6 +23,7 @@ env steps at which that checkpoint was saved.
 from __future__ import annotations
 
 import argparse
+import copy
 import csv
 import json
 import re
@@ -161,7 +162,7 @@ class Run:
         if self.kind == "es":
             d = torch.load(self.checkpoints[ckpt], map_location=device, weights_only=False)
             return ESPolicy(d, device)
-        runner = MjlabOnPolicyRunner(wrapped_env, dict(self.agent_cfg), device=device)
+        runner = MjlabOnPolicyRunner(wrapped_env, copy.deepcopy(self.agent_cfg), device=device)
         runner.load(str(self.checkpoints[ckpt]), load_cfg={"actor": True},
                     strict=True, map_location=device)
         return runner.get_inference_policy(device=device)

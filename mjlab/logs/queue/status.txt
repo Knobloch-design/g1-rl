@@ -1,0 +1,37 @@
+2026-11-08 17:05:13  queue started; training must end by 2026-11-09 07:40:00, all by 2026-11-09 08:40:00
+2026-11-08 17:05:13  START ppo_adam_big
+2026-11-08 17:32:15  END   ppo_adam_big (exit 0)
+2026-11-08 17:32:15  START ars_linear
+2026-11-08 18:27:26  END   ars_linear (exit 0)
+2026-11-08 18:27:26  START openai_es_small
+2026-11-08 19:22:39  END   openai_es_small (exit 0)
+2026-11-08 19:22:39  START pgpe_small
+2026-11-08 20:17:53  END   pgpe_small (exit 0)
+2026-11-08 20:17:53  START cmaes_small
+2026-11-08 21:13:05  END   cmaes_small (exit 0)
+2026-11-08 21:13:05  START ars_small
+2026-11-08 22:08:18  END   ars_small (exit 0)
+2026-11-08 22:08:18  START ppo_adam_small
+2026-11-08 22:34:05  END   ppo_adam_small (exit 0)
+2026-11-08 22:34:05  START ppo_sgd_big
+2026-11-08 23:01:15  END   ppo_sgd_big (exit 0)
+2026-11-08 23:01:15  START ppo_sgd_big_fixedlr
+2026-11-08 23:27:00  END   ppo_sgd_big_fixedlr (exit 0)
+2026-11-08 23:27:00  START openai_es_small_sgd
+2026-11-09 00:22:17  END   openai_es_small_sgd (exit 0)
+2026-11-09 00:22:17  START pgpe_small_adam
+2026-11-09 01:17:28  END   pgpe_small_adam (exit 0)
+2026-11-09 01:17:28  START sep_cmaes_small
+2026-11-09 02:12:41  END   sep_cmaes_small (exit 0)
+2026-11-09 02:12:41  START openai_es_big
+2026-11-09 03:07:53  END   openai_es_big (exit 0)
+2026-11-09 03:07:53  START ars_big
+2026-11-09 04:03:10  END   ars_big (exit 0)
+2026-11-09 04:03:10  START pgpe_big
+2026-11-09 04:58:27  END   pgpe_big (exit 0)
+2026-11-09 04:58:27  START sep_cmaes_big
+2026-11-09 05:53:39  END   sep_cmaes_big (exit 0)
+2026-11-09 05:53:39  START evaluation
+2026-11-09 06:16:07  END   evaluation (exit 1)
+2026-11-09 06:16:07  END   comparison page (exit 0) -> logs/comparison/index.html
+2026-11-09 06:16:08  queue finished

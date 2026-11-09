@@ -1,0 +1,29 @@
+{
+  "algo": "pgpe",
+  "hidden": [
+    512,
+    256,
+    128
+  ],
+  "popsize": 2048,
+  "episodes_per_candidate": 2,
+  "center_envs": 256,
+  "horizon": 500,
+  "generations": 100000,
+  "time_limit_min": 55.0,
+  "sigma": 0.02,
+  "lr": 1.0,
+  "optimizer": null,
+  "top_dirs": null,
+  "weight_decay": 0.005,
+  "action_clip": null,
+  "save_every": 10,
+  "seed": 0,
+  "run_name": "",
+  "log_root": "logs/es/g1_velocity",
+  "obs_dim": 99,
+  "act_dim": 29,
+  "num_params": 219165,
+  "num_envs": 4352,
+  "center_copies": 128
+}
