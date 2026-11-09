@@ -16,4 +16,17 @@ mjlab/logs/rsl_rl/*
 !mjlab/logs/rsl_rl/g1_velocity/
 mjlab/logs/rsl_rl/g1_velocity/*/model_*.pt
 !mjlab/logs/rsl_rl/g1_velocity/*/model_2999.pt
+!mjlab/logs/rsl_rl/g1_velocity/*/model_3999.pt
 mjlab/logs/rsl_rl/g1_velocity/*/progress/iter_*.mp4
+
+# ES runs: keep config, progress, eval results and TensorBoard logs; only each
+# run's final checkpoint is committed (force-added), the rest stay local.
+!mjlab/logs/es/
+mjlab/logs/es/*
+!mjlab/logs/es/g1_velocity/
+mjlab/logs/es/g1_velocity/*/model_*.pt
+# Overnight queue status and the comparison page.
+!mjlab/logs/queue/
+mjlab/logs/queue/*
+!mjlab/logs/queue/status.txt
+!mjlab/logs/comparison/
